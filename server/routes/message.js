@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
 	const newMessage = Message({
 		username: req.body.username,
 		text: req.body.message,
-		charCount: req.body.charCount
+		textCharCount: req.body.textCharCount
 	})
 	
 	getMessages((err, messages) => {
@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
 	const newMessage = Message({
 		username: req.body.username,
 		text: req.body.message,
-		charCount: req.body.charCount
+		textCharCount: req.body.textCharCount
 	})
 	
 	addMessageToDB(newMessage, (err, message) => {

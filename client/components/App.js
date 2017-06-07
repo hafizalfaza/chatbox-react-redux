@@ -1,8 +1,10 @@
 import React from 'react';
 import {sendMessage} from '../actions/sendMessage';
-import {fetchMessages} from '../actions/fetchMessages';
+import {fetchMessages, updateMessages} from '../actions/fetchMessages';
+import {setInitialMessages} from '../actions/fetchMessages';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
+import MessagesList from './MessagesList/MessagesList'; 
 
 class App extends React.Component{
 	constructor(props){
@@ -22,7 +24,10 @@ class App extends React.Component{
 	
 	componentWillMount(){
 		this.props.fetchMessages().then(
-			(res) => console.log(res.data)
+			(res) => {
+				this.props.setInitialMessages(res.data.messages)
+			},
+			(err) => console.log(err.response.data)
 		);
 	}
 	
@@ -55,21 +60,28 @@ class App extends React.Component{
 	onSubmit(e){
 		const username = this.state.chatUsername;
 		const message = this.state.chatMessage;
-		const charCount = this.state.charCount;
+		const textCharCount = this.state.textCharCount;
 		
-		const data = {username: username, message: message, charCount: charCount}
+		const data = {username: username, message: message, textCharCount: textCharCount}
 		e.preventDefault();
-		this.props.sendMessage(data);		
+		this.props.sendMessage(data).then(
+			(res) => {
+				this.setState({chatUsername: '', chatMessage: '', textCharCount: 0})
+			},
+			(err) => console.log(err.response.data)
+		);		
 	}
 	
 	
 	render(){
 		const {textCharCount, error, submitDisabled} = this.state;
+		const {messages} = this.props;
 		return(
 			<div className="container">
 				<div className="col-md-4 col-md-offset-4">
 					<form onSubmit={this.onSubmit}>
-						<h1>Let's chat!</h1>
+						<h1>Chatbox</h1>
+						<h3>Let's chat!</h3>
 						<div className="form-group">
 							<input 
 								type="text" 
@@ -81,7 +93,7 @@ class App extends React.Component{
 							/>
 						</div>
 						<div className="well" style={{height: 300, overflowY: "auto"}}>
-						  <h4>Hello</h4>						
+						  <MessagesList messages={messages}/>					
 						</div>
 						<div className="form-group">
 							<input 
@@ -109,7 +121,15 @@ class App extends React.Component{
 
 App.propTYpes = {
 	sendMessage: PropTypes.func.isRequired,
-	fetchMessages: PropTypes.func.isRequired
+	fetchMessages: PropTypes.func.isRequired,
+	setInitialMessages: PropTypes.func.isRequired,
+	updateMessages: PropTypes.func.isRequired,
 }
 
-export default connect(null, {sendMessage, fetchMessages})(App);
+function mapStateToProps(state){
+	return {
+		messages: state.message
+	}
+}
+
+export default connect(mapStateToProps, {sendMessage, fetchMessages, setInitialMessages, updateMessages})(App);

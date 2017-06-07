@@ -11,13 +11,13 @@ const MessageSchema = mongoose.Schema({
 		type: String,
 		required: true
 	},
-	charCount: {
-		type: String,
+	textCharCount: {
+		type: Number,
 		required: true
 	},
 	createdAt: {
 		type: Date,
-		default: Date.now(),
+		default: Date.now,
 		required: true
 	}	
 });
@@ -29,5 +29,5 @@ export function addMessageToDB(newMessage, user, callback){
 }
 
 export function getMessages(callback){
-	Message.find(callback);
+	Message.find(callback).sort({createdAt: -1});
 }

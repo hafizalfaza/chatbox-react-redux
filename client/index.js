@@ -8,8 +8,11 @@ import App from './components/App';
 import rootReducer from './rootReducer';
 
 const store = createStore(
-	(state = {}) => state,
-	applyMiddleware(thunk)
+	rootReducer,
+	compose(
+		applyMiddleware(thunk),
+		window.devToolsExtension ? window.devToolsExtension() : f => f		
+	)
 );
 
 
