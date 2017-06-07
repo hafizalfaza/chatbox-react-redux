@@ -6,7 +6,6 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import MessagesList from './MessagesList/MessagesList'; 
 import io from 'socket.io-client';
-let socket = io('http://localhost:3000');
 
 class App extends React.Component{
 	constructor(props){
@@ -17,7 +16,9 @@ class App extends React.Component{
 			usernameCharCount: 0,
 			textCharCount: 0,
 			errors: {},
-			submitDisabled: true
+			submitDisabled: true,
+			recentMessages: [],
+			socket: window.io('http://localhost:3000')
 		}
 		this.onTypingUsername = this.onTypingUsername.bind(this);
 		this.onTypingMessage = this.onTypingMessage.bind(this);
@@ -31,11 +32,14 @@ class App extends React.Component{
 			},
 			(err) => console.log(err.response.data)
 		);
-
-		socket.on(`server: event`, data => {
-			this.setState({data})
-		})
-		
+	}
+	
+	
+	componentDidMount(){
+		this.state.socket.on('receive-message', (message) => {
+			this.setState({recentMessages: this.state.recentMessages.concat(message)});
+			console.log(this.state.recentMessages);
+		});		
 	}
 	
 	onTypingMessage(e){
@@ -72,14 +76,17 @@ class App extends React.Component{
 		const data = {username: username, message: message, textCharCount: textCharCount}
 		e.preventDefault();
 		this.props.sendMessage(data).then(
-			(res) => this.setState({chatMessage: '', charCount: 0}, () => this.props.updateMessages()),
+			(res) => {
+				this.state.socket.emit('new-message', res.data.message)
+				this.setState({chatMessage: '', charCount: 0})
+			},
 			(err) => console.log(err.response.data)
-		);		
+		);
 	}
 	
 	
 	render(){
-		const {textCharCount, error, submitDisabled} = this.state;
+		const {textCharCount, error, submitDisabled, recentMessages} = this.state;
 		const {messages} = this.props;
 		return(
 			<div className="container">
@@ -98,7 +105,7 @@ class App extends React.Component{
 							/>
 						</div>
 						<div className="well" style={{height: 360, overflowY: "auto"}}>
-						  <MessagesList messages={messages}/>					
+						  <MessagesList messages={messages} recentMessages={recentMessages}/>					
 						</div>
 						<div className="form-group">
 							<input 

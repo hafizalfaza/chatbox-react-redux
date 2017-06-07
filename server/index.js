@@ -8,6 +8,7 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import webpackConfig from '../webpack.config.dev';
 import config from './config/database';
 import message from './routes/message';
+import socketEvents from './socket/socketEvents'
 const connections = [];
 
 const app = express();
@@ -49,16 +50,7 @@ const server = app.listen(port, () => {
 
 const io = require('socket.io')(server);  
 
-io.on('connection', (socket) => {
-	
-	connections.push(socket);
-	console.log('We have %s connection', connections.length);
-	
-	
-	socket.on('disconnect', () => {
-		connections.splice(connections.indexOf(socket), 1);
-		console.log('User disconnected, now we have %s connections', connections.length)
-	});
-});
+socketEvents(io)
+
 
 
