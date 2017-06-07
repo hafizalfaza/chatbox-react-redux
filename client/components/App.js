@@ -5,6 +5,8 @@ import {setInitialMessages} from '../actions/fetchMessages';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import MessagesList from './MessagesList/MessagesList'; 
+import io from 'socket.io-client';
+let socket = io('http://localhost:3000');
 
 class App extends React.Component{
 	constructor(props){
@@ -29,6 +31,11 @@ class App extends React.Component{
 			},
 			(err) => console.log(err.response.data)
 		);
+
+		socket.on(`server: event`, data => {
+			this.setState({data})
+		})
+		
 	}
 	
 	onTypingMessage(e){

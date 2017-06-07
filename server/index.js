@@ -8,6 +8,7 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import webpackConfig from '../webpack.config.dev';
 import config from './config/database';
 import message from './routes/message';
+const connections = [];
 
 const app = express();
 import mongoose from 'mongoose';
@@ -35,14 +36,29 @@ app.use(webpackHotMiddleware(compiler));
 app.use(bodyParser.json());
 app.use('/api/message', message);
 
-const port = 3000
+const port = 3000;
 
 
 app.get('/*', (req, res) => {
 	res.sendFile(path.join(__dirname, ('index.html')))
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
 	console.log("Server running on port: "+ port);
 });
+
+const io = require('socket.io')(server);  
+
+io.on('connection', (socket) => {
+	
+	connections.push(socket);
+	console.log('We have %s connection', connections.length);
+	
+	
+	socket.on('disconnect', () => {
+		connections.splice(connections.indexOf(socket), 1);
+		console.log('User disconnected, now we have %s connections', connections.length)
+	});
+});
+
 
