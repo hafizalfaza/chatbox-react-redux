@@ -65,9 +65,7 @@ class App extends React.Component{
 		const data = {username: username, message: message, textCharCount: textCharCount}
 		e.preventDefault();
 		this.props.sendMessage(data).then(
-			(res) => {
-				this.setState({chatUsername: '', chatMessage: '', textCharCount: 0})
-			},
+			(res) => this.setState({chatUsername: '', chatMessage: '', charCount: 0}, () => this.props.updateMessages()),
 			(err) => console.log(err.response.data)
 		);		
 	}

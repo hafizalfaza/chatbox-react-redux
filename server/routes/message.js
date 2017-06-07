@@ -34,7 +34,7 @@ router.post('/', (req, res) => {
 		if(err){
 			res.status(500).json(err)
 		}else{
-			res.status(200).json(message)
+			res.status(200).json({message: message})
 		}
 	});
 	

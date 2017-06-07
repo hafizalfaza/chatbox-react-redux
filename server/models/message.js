@@ -24,7 +24,7 @@ const MessageSchema = mongoose.Schema({
 
 export const Message = mongoose.model('Message', MessageSchema);
 
-export function addMessageToDB(newMessage, user, callback){
+export function addMessageToDB(newMessage, callback){
 	newMessage.save(callback);
 }
 

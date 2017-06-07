@@ -4,7 +4,8 @@ import {SET_INITIAL_MESSAGES} from './types';
 
 export function updateMessages(){
 	return dispatch => {
-		return console.log('UPDATE!');
+		dispatch(fetchMessages())
+		.then(res => dispatch(setInitialMessages(res.data.messages)))
 	}
 }
 
