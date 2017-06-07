@@ -65,7 +65,7 @@ class App extends React.Component{
 		const data = {username: username, message: message, textCharCount: textCharCount}
 		e.preventDefault();
 		this.props.sendMessage(data).then(
-			(res) => this.setState({chatUsername: '', chatMessage: '', charCount: 0}, () => this.props.updateMessages()),
+			(res) => this.setState({chatMessage: '', charCount: 0}, () => this.props.updateMessages()),
 			(err) => console.log(err.response.data)
 		);		
 	}
@@ -76,7 +76,7 @@ class App extends React.Component{
 		const {messages} = this.props;
 		return(
 			<div className="container">
-				<div className="col-md-4 col-md-offset-4">
+				<div className="col-lg-4 col-lg-offset-4">
 					<form onSubmit={this.onSubmit}>
 						<h1>Chatbox</h1>
 						<h3>Let's chat!</h3>
@@ -90,7 +90,7 @@ class App extends React.Component{
 								onChange={this.onTypingUsername}
 							/>
 						</div>
-						<div className="well" style={{height: 300, overflowY: "auto"}}>
+						<div className="well" style={{height: 360, overflowY: "auto"}}>
 						  <MessagesList messages={messages}/>					
 						</div>
 						<div className="form-group">
